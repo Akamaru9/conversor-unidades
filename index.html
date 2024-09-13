@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de Unidades Automático</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #131212; /* Fondo negro */
+            color: #ffffff; /* Color del texto principal en blanco */
+            margin: 20px;
+        }
+
+        h1 {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333; /* Mantener el color de las etiquetas oscuro */
+        }
+
+        input, select {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 150px;
+        }
+
+        select {
+            background-color: #f9f9f9;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #resultadoFinal {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ffffff; /* Texto en blanco para los resultados */
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        div {
+            background-color: #ffffff; /* Fondos de los cuadros en blanco */
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+            color: #000000; /* Color de texto en los cuadros en negro */
+        }
+
+    </style>
+    <script>
+        // Función para realizar la conversión automáticamente
+        function convertir() {
+            let tipoConversion = document.getElementById("tipoConversion").value;
+            if (tipoConversion === "peso") {
+                mostrarCampoPeso();
+                calcularPeso(); // Si selecciona calcular peso
+            } else if (tipoConversion === "metraje") {
+                mostrarCampoMetraje();
+                calcularMetraje(); // Si selecciona calcular metraje
+            }
+        }
+
+        // Función para calcular el peso a partir del metraje
+        function calcularPeso() {
+            let metrosBase = parseFloat(document.getElementById("metrosBase").value);
+            let gramosBase = parseFloat(document.getElementById("gramosBase").value);
+            let metrosAConvertir = parseFloat(document.getElementById("metrosAConvertir").value);
+            let equivalenciaResultado;
+
+            // Convertir la unidad de metros base y a convertir
+            let unidadMetrosBase = document.getElementById("unidadMetrosBase").value;
+            let unidadMetrosConvertir = document.getElementById("unidadMetrosConvertir").value;
+            if (unidadMetrosBase === "centimetros") {
+                metrosBase = metrosBase / 100;
+            }
+            if (unidadMetrosConvertir === "centimetros") {
+                metrosAConvertir = metrosAConvertir / 100;
+            }
+
+            // Convertir gramos base a gramos si es necesario
+            let unidadGramosBase = document.getElementById("unidadGramosBase").value;
+            if (unidadGramosBase === "kilogramos") {
+                gramosBase = gramosBase * 1000;
+            }
+
+            // Aplicar regla de tres simple para calcular el peso
+            equivalenciaResultado = (gramosBase * metrosAConvertir) / metrosBase;
+
+            // Mostrar el resultado en gramos o kilogramos
+            actualizarResultadoPeso(equivalenciaResultado);
+        }
+
+        // Función para calcular el metraje a partir del peso
+        function calcularMetraje() {
+            let metrosBase = parseFloat(document.getElementById("metrosBase").value);
+            let gramosBase = parseFloat(document.getElementById("gramosBase").value);
+            let pesoAConvertir = parseFloat(document.getElementById("pesoAConvertir").value);
+            let equivalenciaResultado;
+
+            // Convertir la unidad de metros base
+            let unidadMetrosBase = document.getElementById("unidadMetrosBase").value;
+            if (unidadMetrosBase === "centimetros") {
+                metrosBase = metrosBase / 100;
+            }
+
+            // Convertir gramos base y el peso a convertir
+            let unidadGramosBase = document.getElementById("unidadGramosBase").value;
+            let unidadPesoConvertir = document.getElementById("unidadPesoConvertir").value;
+            if (unidadGramosBase === "kilogramos") {
+                gramosBase = gramosBase * 1000;
+            }
+            if (unidadPesoConvertir === "kilogramos") {
+                pesoAConvertir = pesoAConvertir * 1000;
+            }
+
+            // Aplicar regla de tres simple para calcular el metraje
+            equivalenciaResultado = (pesoAConvertir * metrosBase) / gramosBase;
+
+            // Mostrar el resultado en metros o centímetros
+            actualizarResultadoMetraje(equivalenciaResultado);
+        }
+
+        // Función para actualizar el resultado de peso
+        function actualizarResultadoPeso(equivalenciaResultado) {
+            let unidadResultado = document.getElementById("unidadResultadoPeso").value;
+            let resultadoConvertido = equivalenciaResultado;
+
+            // Convertir a kilogramos si es necesario
+            if (unidadResultado === "kilogramos") {
+                resultadoConvertido = equivalenciaResultado / 1000;
+            }
+
+            document.getElementById("resultadoFinal").innerText = "Resultado en " + unidadResultado + ": " + resultadoConvertido;
+        }
+
+        // Función para actualizar el resultado de metraje
+        function actualizarResultadoMetraje(equivalenciaResultado) {
+            let unidadResultado = document.getElementById("unidadResultadoMetraje").value;
+            let resultadoConvertido = equivalenciaResultado;
+
+            // Convertir a centímetros si es necesario
+            if (unidadResultado === "centimetros") {
+                resultadoConvertido = equivalenciaResultado * 100;
+            }
+
+            document.getElementById("resultadoFinal").innerText = "Resultado en " + unidadResultado + ": " + resultadoConvertido;
+        }
+
+        // Función para mostrar los campos correspondientes para calcular el peso
+        function mostrarCampoPeso() {
+            document.getElementById("campoPeso").style.display = "block";
+            document.getElementById("resultadoPeso").style.display = "block";
+            document.getElementById("campoMetraje").style.display = "none";
+            document.getElementById("resultadoMetraje").style.display = "none";
+        }
+
+        // Función para mostrar los campos correspondientes para calcular el metraje
+        function mostrarCampoMetraje() {
+            document.getElementById("campoPeso").style.display = "none";
+            document.getElementById("resultadoPeso").style.display = "none";
+            document.getElementById("campoMetraje").style.display = "block";
+            document.getElementById("resultadoMetraje").style.display = "block";
+        }
+
+        // Ejecutar la conversión automáticamente cuando cambian los valores
+        document.addEventListener('input', convertir);
+    </script>
+</head>
+<body>
+    <h1>Conversor de Unidades Automático</h1>
+
+    <div>
+        <!-- Selección del tipo de conversión (peso o metraje) -->
+        <div class="form-group">
+            <label for="tipoConversion">Selecciona qué deseas calcular:</label>
+            <select id="tipoConversion" onchange="convertir()">
+                <option value="peso">Calcular Peso</option>
+                <option value="metraje">Calcular Metraje</option>
+            </select>
+        </div>
+
+        <!-- Campos para ingresar la equivalencia base en metros y gramos -->
+        <div class="form-group">
+            <label for="metrosBase">Equivalencia:</label>
+            <input type="number" id="metrosBase" placeholder="Ej: 1" required>
+            <select id="unidadMetrosBase">
+                <option value="metros">Metros</option>
+                <option value="centimetros">Centímetros</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="gramosBase">Equivale a:</label>
+            <input type="number" id="gramosBase" placeholder="Ej: 200" required>
+            <select id="unidadGramosBase">
+                <option value="gramos">Gramos</option>
+                <option value="kilogramos">Kilogramos</option>
+            </select>
+        </div>
+
+        <!-- Campos dinámicos según la opción seleccionada -->
+        <div id="campoPeso" style="display: none;">
+            <!-- Campo para ingresar los metros a convertir -->
+            <div class="form-group">
+                <label for="metrosAConvertir">Introduce la cantidad de metros:</label>
+                <input type="number" id="metrosAConvertir" placeholder="Ej: 3">
+                <select id="unidadMetrosConvertir">
+                    <option value="metros">Metros</option>
+                    <option value="centimetros">Centímetros</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="campoMetraje" style="display: none;">
+            <!-- Campo para ingresar el peso a convertir -->
+            <div class="form-group">
+                <label for="pesoAConvertir">Introduce la cantidad de peso:</label>
+                <input type="number" id="pesoAConvertir" placeholder="Ej: 600">
+                <select id="unidadPesoConvertir">
+                    <option value="gramos">Gramos</option>
+                    <option value="kilogramos">Kilogramos</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Selección de la unidad de resultado -->
+        <div id="resultadoPeso" style="display: none;">
+            <div class="form-group">
+                <label for="unidadResultadoPeso">Selecciona la unidad del resultado (Peso):</label>
+                <select id="unidadResultadoPeso" onchange="convertir()">
+                    <option value="gramos">Gramos</option>
+                    <option value="kilogramos">Kilogramos</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="resultadoMetraje" style="display: none;">
+            <div class="form-group">
+                <label for="unidadResultadoMetraje">Selecciona la unidad del resultado (Metraje):</label>
+                <select id="unidadResultadoMetraje" onchange="convertir()">
+                    <option value="metros">Metros</option>
+                    <option value="centimetros">Centímetros</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Mostrar el resultado final -->
+        <p id="resultadoFinal">Resultado: </p>
+    </div>
+</body>
+</html>
